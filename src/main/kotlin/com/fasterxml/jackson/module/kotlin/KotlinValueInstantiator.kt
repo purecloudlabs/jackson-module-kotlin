@@ -42,7 +42,7 @@ internal class KotlinValueInstantiator(src: StdValueInstantiator, private val ca
                 return@forEachIndexed
             }
 
-            val paramVal = if (!isMissing || paramDef.isPrimitive() || jsonProp.hasInjectableValueId() || jsonProp.injectsDefaultValue()) {
+            val paramVal = if (!isMissing || paramDef.isPrimitive() || jsonProp.hasInjectableValueId()) {
                 buffer.getParameter(jsonProp)
             } else {
                 null
@@ -95,8 +95,6 @@ internal class KotlinValueInstantiator(src: StdValueInstantiator, private val ca
     }
 
     private fun SettableBeanProperty.hasInjectableValueId(): Boolean = injectableValueId != null
-
-    private fun SettableBeanProperty.injectsDefaultValue(): Boolean = getAnnotation(InjectsDefaultValue::class.java) != null
 }
 
 internal class KotlinInstantiators(private val cache: ReflectionCache) : ValueInstantiators {
