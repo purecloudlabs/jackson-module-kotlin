@@ -63,6 +63,15 @@ internal class KotlinValueInstantiator(src: StdValueInstantiator, private val ca
                 ).wrapWithPath(this.valueClass, jsonProp.name)
             }
 
+            if (jsonProp.type.isCollectionLikeType && paramDef.type.arguments[0].type?.isMarkedNullable == false && (paramVal as Collection<*>).any { it == null }) {
+                val listType = paramDef.type.arguments[0].type
+                throw MissingKotlinParameterException(
+                    parameter = paramDef,
+                    processor = ctxt.parser,
+                    msg = "Instantiation of $listType collection failed for JSON property ${jsonProp.name} due to null value in a collection that does not allow null values"
+                ).wrapWithPath(this.valueClass, jsonProp.name)
+            }
+
             numCallableParameters++
             callableParameters[idx] = paramDef
         }
