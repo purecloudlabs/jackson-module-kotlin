@@ -47,6 +47,14 @@ class TestGithub27 {
         mapper.readValue<ClassWithListOfInt>(json)
     }
 
+    private data class TestClass<T>(val samples: T)
+
+    @Test fun testListOfGeneric() {
+        val json = """{"samples":[1, 2]}"""
+        val stateObj = mapper.readValue<TestClass<List<Int>>>(json)
+        assertThat(stateObj.samples, equalTo(listOf(1, 2)))
+    }
+
     // work around to above
     private class ClassWithListOfIntProtected(val samples: List<Int>) {
         @get:JsonIgnore val safeSamples: List<Int> by lazy { samples.filterNotNull() }
