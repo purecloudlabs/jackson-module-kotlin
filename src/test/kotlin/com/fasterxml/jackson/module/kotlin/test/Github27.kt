@@ -9,6 +9,7 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Ignore
 import org.junit.Test
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 
@@ -45,6 +46,14 @@ class TestGithub27 {
     fun testListOfInt() {
         val json = """{"samples":[1, null]}"""
         mapper.readValue<ClassWithListOfInt>(json)
+    }
+
+    private data class ClassWithNullableListOfInt(val samples: List<Int>?)
+
+    @Test fun testNullableListOfInt() {
+        val json = """{"samples": null}"""
+        val stateObj = mapper.readValue<ClassWithNullableListOfInt>(json)
+        assertNull(stateObj.samples)
     }
 
     private data class TestClass<T>(val samples: T)
