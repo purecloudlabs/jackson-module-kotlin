@@ -72,6 +72,15 @@ internal class KotlinValueInstantiator(src: StdValueInstantiator, private val ca
                 ).wrapWithPath(this.valueClass, jsonProp.name)
             }
 
+            if (paramVal != null && jsonProp.type.isMapLikeType && paramDef.type.arguments.getOrNull(1)?.type?.isMarkedNullable == false && (paramVal as Map<*, *>).any { it.value == null }) {
+                val mapValueType = paramDef.type.arguments[1].type
+                throw MissingKotlinParameterException(
+                    parameter = paramDef,
+                    processor = ctxt.parser,
+                    msg = "Instantiation of $mapValueType in map failed for JSON property ${jsonProp.name} due to null value in a map that does not allow null values"
+                ).wrapWithPath(this.valueClass, jsonProp.name)
+            }
+
             numCallableParameters++
             callableParameters[idx] = paramDef
         }

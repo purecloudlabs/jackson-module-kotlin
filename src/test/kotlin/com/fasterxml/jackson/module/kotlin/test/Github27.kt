@@ -7,10 +7,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Ignore
 import org.junit.Test
 import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 
 class TestGithub27 {
@@ -54,6 +52,23 @@ class TestGithub27 {
         val json = """{"samples": null}"""
         val stateObj = mapper.readValue<ClassWithNullableListOfInt>(json)
         assertNull(stateObj.samples)
+    }
+
+    private data class ClassWithMapOfStringToNullableInt(val samples: Map<String, Int?>)
+
+    @Test
+    fun testMapOfStringToNullableInt() {
+        val json = """{ "samples": { "key": null } }"""
+        val stateObj = mapper.readValue<ClassWithMapOfStringToNullableInt>(json)
+        assertThat(stateObj.samples, equalTo(mapOf<String, Int?>("key" to null)))
+    }
+
+    private data class ClassWithMapOfStringToInt(val samples: Map<String, Int>)
+
+    @Test(expected = MissingKotlinParameterException::class)
+    fun testMapOfStringToInt() {
+        val json = """{ "samples": { "key": null } }"""
+        mapper.readValue<ClassWithMapOfStringToInt>(json)
     }
 
     private data class TestClass<T>(val samples: T)
