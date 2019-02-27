@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedConstructor
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
+import java.util.EnumSet
 import kotlin.reflect.KParameter
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaType
@@ -50,7 +51,10 @@ internal class KotlinValueInstantiator(src: StdValueInstantiator, private val ca
             }
 
             if (paramVal == null && ((nullToEmptyCollection && jsonProp.type.isCollectionLikeType) || (nullToEmptyMap && jsonProp.type.isMapLikeType))) {
-                paramVal = NullsAsEmptyProvider(jsonProp.valueDeserializer).getNullValue(ctxt)
+                paramVal = when {
+                    jsonProp.type.isTypeOrSubTypeOf(EnumSet::class.java) -> EnumSet.noneOf(EmptyEnum::class.java)
+                    else -> NullsAsEmptyProvider(jsonProp.valueDeserializer).getNullValue(ctxt)
+                }
             }
 
             jsonParamValueList[idx] = paramVal
@@ -116,6 +120,8 @@ internal class KotlinValueInstantiator(src: StdValueInstantiator, private val ca
             else -> false
         }
     }
+
+    private enum class EmptyEnum
 
     private fun SettableBeanProperty.hasInjectableValueId(): Boolean = injectableValueId != null
 }
