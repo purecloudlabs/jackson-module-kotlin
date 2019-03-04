@@ -92,7 +92,7 @@ internal class KotlinNamesAnnotationIntrospector(val module: KotlinModule, val c
         if (member is AnnotatedParameter) {
             return findKotlinParameterName(member)
         } else if (member is AnnotatedMethod) {
-            if (member.declaringClass.isKotlinClass() && member.rawReturnType == Boolean::class.java) {
+            if (member.declaringClass.isKotlinClass() && member.rawReturnType == Boolean::class.java && member.name.startsWith("is")) {
                 if (cache.isKotlinGeneratedBooleanMethod(member, { it.declaringClass.declaredFields.any { f -> f.name == member.name } })) {
                     return member.name
                 }
