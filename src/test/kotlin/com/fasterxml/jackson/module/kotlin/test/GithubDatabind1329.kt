@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 
-class GithubDatabind1329 {
+class TestGithubDatabind1329 {
     @Test
     @Ignore("Broken in databind 2.8.0+ (not 2.8.0.rc2 which works) and not a problem with the Kotlin module")
     fun testPolymorphicWithEnum() {
