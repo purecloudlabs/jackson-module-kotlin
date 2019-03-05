@@ -30,7 +30,21 @@ class TestGithub80 {
         assertEquals(example.isTrueOrFalse, deserialized.isTrueOrFalse)
     }
 
+    @Test
+    fun testGetProperty() {
+        val mapper = jacksonObjectMapper()
+
+        val example = GetExample(1)
+        val json = mapper.writeValueAsString(example)
+        assertEquals("""{"getProp":1}""", json)
+
+        val deserialized = mapper.readValue(json, GetExample::class.java)
+        assertEquals(example.getProp, deserialized.getProp)
+    }
+
     data class IsBoolExample(val isTrueOrFalse: Boolean)
 
     data class NullableIsBoolExample(val isTrueOrFalse: Boolean?)
+
+    data class GetExample(val getProp: Int)
 }
